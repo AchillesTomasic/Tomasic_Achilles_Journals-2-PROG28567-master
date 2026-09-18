@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 
 
+
 public class Player : MonoBehaviour
 {
     public Transform enemyTransform;
@@ -38,12 +39,27 @@ public class Player : MonoBehaviour
         {
             SpawnBombTrail(bombTrailSpacing, numberOfTrailBombs); // spawns a trail of bombs behind the player
         }
+        // checks if o is pressed
         if (Keyboard.current.oKey.wasPressedThisFrame)
         {
             SpawnBombOnRandomCorner(randomBombDistance); // spawns a bomb at a random corner of the screen
         }
+        // checks if j is pressed
+        if (Keyboard.current.jKey.wasPressedThisFrame)
+        {
+            float ratio = Random.Range(0f, 1f); // sets random value between 0 and 1
+            WarpPlayer(enemyTransform,ratio);// warps the player a set distance based on the ratio to the enemy
         }
-    
+    }
+    // moves the players to a target position by a set ratio amount
+    public void WarpPlayer(Transform target, float ratio)
+    {
+        Vector2 distance = target.position - transform.position;// distance between the player position and the target position
+        float mag = distance.magnitude; // gets the magnitude of this distance
+        float pointBetweenMag = Mathf.Lerp(0,mag,ratio); // sets the magnitude equal 
+        Vector2 NormalizedDistance =  NormalizeCustom(distance); // gets the distance normalized for the direction
+        transform.position += (Vector3)NormalizedDistance * pointBetweenMag; //sets the player pos to the direction mutliplied by the smaller magnitude 
+    }
 
     // spawns a bomb on a random corner of the screen
     public void SpawnBombOnRandomCorner(float inDistance)

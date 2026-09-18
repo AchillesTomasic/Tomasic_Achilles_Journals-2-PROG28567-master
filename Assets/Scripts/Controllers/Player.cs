@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
     // Variables for task 1 B //
     public float bombTrailSpacing; // used to space the bombs along the trail
     public int numberOfTrailBombs; // used to determine the number of bombs in the trail
-
+    // Variables used for task 2 //
+    public float randomBombDistance; // used for the distance of the random bombs
     // used for the coroutine assignment provided in class //
     public float bombSpawnWaitTime = 3f; // time for the bomb to wait before spawning
     private IEnumerator bombWaitCoroutine; // coroutine for the bomb
@@ -37,9 +38,25 @@ public class Player : MonoBehaviour
         {
             SpawnBombTrail(bombTrailSpacing, numberOfTrailBombs); // spawns a trail of bombs behind the player
         }
-        
+        if (Keyboard.current.oKey.wasPressedThisFrame)
+        {
+            SpawnBombOnRandomCorner(randomBombDistance); // spawns a bomb at a random corner of the screen
+        }
         }
     
+
+    // spawns a bomb on a random corner of the screen
+    public void SpawnBombOnRandomCorner(float inDistance)
+    {
+        // selects a random number between 0 and 1 then rounds to either 0 or 1 to give two options
+        Vector2 randomBombPosition = new Vector2(Mathf.Round( Random.Range(0, 2)), Mathf.Round(Random.Range(0, 2)));
+        randomBombPosition *= 2; // raises the value so that if it is a 1, then it becomes a 2
+        // lowers the value so that it either becomes -1 or 1
+        randomBombPosition.x -= 1; 
+        randomBombPosition.y -= 1;
+
+        Instantiate(bombPrefab, randomBombPosition + (Vector2)transform.position, Quaternion.identity);// spawns bomb
+    }
     // used to spawn a trail of bombs behind the player
     public void SpawnBombTrail(float inBombSpacing, int inNumberOfBombs)
     {

@@ -17,12 +17,13 @@ public class Player : MonoBehaviour
     public int numberOfTrailBombs; // used to determine the number of bombs in the trail
     // Variables used for task 2 //
     public float randomBombDistance; // used for the distance of the random bombs
+    // Variavles used for Task 4
+    public float MaxRange;// maximum range of the asteroid radar
     // used for the coroutine assignment provided in class //
     public float bombSpawnWaitTime = 3f; // time for the bomb to wait before spawning
     private IEnumerator bombWaitCoroutine; // coroutine for the bomb
     void Start()
     {
-        Debug.Log(dotProduct(transform.up,enemyTransform.up));
        
     }
     // Update is called once per frame
@@ -49,6 +50,22 @@ public class Player : MonoBehaviour
         {
             float ratio = Random.Range(0f, 1f); // sets random value between 0 and 1
             WarpPlayer(enemyTransform,ratio);// warps the player a set distance based on the ratio to the enemy
+        }
+        DetectAsteroids(MaxRange, asteroidTransforms); // detects if asteroids are a certian distance from the player
+    }
+    //detects if an asteroid is in range then draws a line to that asteroid
+    public void DetectAsteroids(float inMaxRange,List<Transform> inAsteroids)
+    {
+        // loops over every asteroid in the scene
+        foreach (Transform asteroid in inAsteroids)
+        {
+            float magnitudeFromPlayer = (asteroid.position - transform.position).magnitude; // checks the magnitude from the asteroid to the player
+            //checks if the magnitude is less than the max range value
+            if(magnitudeFromPlayer < inMaxRange)
+            {
+                Vector2 exactAsteroidLength = (Vector2)transform.position + NormalizeCustom(asteroid.position - transform.position) * 2.5f; //normalizes the asteroids position to simply give a directional value then is increased to exactly 2.5f
+                Debug.DrawLine(transform.position, exactAsteroidLength);// draws from the player to the asteroid at exactly 2.5f
+            }
         }
     }
     // moves the players to a target position by a set ratio amount
@@ -103,7 +120,7 @@ public class Player : MonoBehaviour
     public Vector2 NormalizeCustom(Vector2 inVector)
     {
         float mag = inVector.magnitude;
-        Vector2 normalize = new Vector2(inVector.x / Mathf.Abs(mag), inVector.y / Mathf.Abs(mag));
+        Vector2 normalize = new Vector2(inVector.x / mag, inVector.y / mag);
         return normalize;
     }
     // calculation used to find the dot product of a vector set. used to find angle between two vectors //// claswork/////
